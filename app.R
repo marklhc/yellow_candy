@@ -22,7 +22,8 @@ ui <- fluidPage(
                   c("Prior 1 (Flat)" = 1, 
                     "Prior 2 (Weak)" = 2, 
                     "Prior 3 (Strong)" = 3)), 
-      actionButton("draw", "Draw a Candy!"), 
+      actionButton("draw", "Draw a candy!"), 
+      actionButton("draw2", "Draw 10 pieces of candy!"), 
       textOutput("newcandy"), 
       textOutput("total"), 
       textOutput("yellowcandy")
@@ -55,6 +56,11 @@ server <- function(input, output) {
   observeEvent(input$draw, {
     v$data <- c(v$data, sample(c("red", "blue", "green", "black", "yellow"), 1, 
                                prob = c(.3, .2, .28, .15, .07)))
+  })
+  observeEvent(input$draw2, {
+    v$data <- c(v$data, sample(c("red", "blue", "green", "black", "yellow"), 10, 
+                               prob = c(.3, .2, .28, .15, .07), 
+                               replace = TRUE))
   })
   observeEvent(input$priors, {
     v$data <- NULL
