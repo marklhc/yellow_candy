@@ -55,11 +55,11 @@ server <- function(input, output) {
   })
   observeEvent(input$draw, {
     v$data <- c(v$data, sample(c("red", "blue", "green", "black", "yellow"), 1, 
-                               prob = c(.3, .2, .28, .15, .07)))
+                               prob = c(.28, .2, .26, .15, .11)))
   })
   observeEvent(input$draw2, {
     v$data <- c(v$data, sample(c("red", "blue", "green", "black", "yellow"), 10, 
-                               prob = c(.3, .2, .28, .15, .07), 
+                               prob = c(.28, .2, .26, .15, .11), 
                                replace = TRUE))
   })
   observeEvent(input$priors, {
@@ -74,7 +74,7 @@ server <- function(input, output) {
     par(mar = c(4, 4, 2, 0) + 0.1)
     curve(dbeta(x, a(), b()), from = 0, to = 1, 
           xlab = expression(theta), ylab = "", lwd = 2, lty = "dashed", 
-          ylim = c(0, 4.5), col = "green3", n = 237, 
+          ylim = c(0, 4.5), col = "green3", n = 501, 
           main = "Prior")
     abline(v = 0.2, lty = "dotted")
   })
@@ -86,16 +86,19 @@ server <- function(input, output) {
             integrate(function(x) dbinom(1, 10, x), 0, 1)$value, 
           from = 0, to = 1, lwd = 2, lty = "twodash", col = "red", 
           ylab = "", xlab = expression(theta), 
-          main = "Likelihood")
+          main = "Likelihood", n = 501)
   })
   
   output$posteriorPlot <- renderPlot({
     # generate plot for the likelihood
     par(mar = c(4, 4, 2, 0) + 0.1)
-    curve(dbeta(x, a() + sum(v$data == "yellow"), 
-                b() + sum(v$data != "yellow")), from = 0, to = 1, 
+    a_star <- a() + sum(v$data == "yellow")
+    b_star <- b() + sum(v$data != "yellow")
+    curve(dbeta(x, a_star, b_star), from = 0, to = 1, 
           lwd = 2, col = "blue", ylab = "", xlab = expression(theta), 
-          main = "Posterior")
+          main = "Posterior", n = 501)
+    text(x = 0.7, y = max(dbeta(seq(0, 1, by = .01), a_star, b_star)) * 0.9, 
+         pos = 4, bquote("Mean" == .(a_star / (a_star + b_star))))
   })
 }
 
